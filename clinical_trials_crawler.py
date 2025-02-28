@@ -132,8 +132,7 @@ class ClinicalTrialsCrawler:
                         self.data.extend(page_data)
                         print(f"第 {current_page} 页成功爬取 {len(page_data)} 条数据")
                     else:
-                        print(f"第 {current_page} 页未找到有效数据，可能已到达最后一页")
-                        break
+                        print(f"第 {current_page} 页未找到有效数据，跳过，继续下一页")
                     
                     # 点击下一页
                     try:
@@ -227,7 +226,7 @@ def main():
     crawler = ClinicalTrialsCrawler()
     # 可以根据需要调整页数
     maxCount = 28600
-    crawler.crawl(start_page=1213, max_pages=maxCount) 
+    crawler.crawl(start_page=1, max_pages=maxCount) 
     # 获取当前时间
     current_time = datetime.now()
     # 格式化为指定格式：yyyymmddHHmmss
