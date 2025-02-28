@@ -1,0 +1,7 @@
+requests==2.31.0
+lxml==4.9.3
+pandas==2.2.0
+fake-useragent==1.4.0
+selenium==4.18.1
+webdriver-manager==4.0.1
+undetected-chromedriver==3.5.5 
