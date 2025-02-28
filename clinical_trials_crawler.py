@@ -58,8 +58,9 @@ class ClinicalTrialsCrawler:
     def parse_table_row(self, row):
         """解析表格行数据"""
         try:
-            cells = self.driver.find_elements(By.XPATH, "//*[@id=\"collapseOne\"]/div/table/tbody/tr[1]/td[1]")
-            if cells:
+            #判断主要研究者姓名是否存在，如果存在则返回数据，否则返回None
+            researcherNameElements = self.driver.find_elements(By.XPATH, "//*[@id=\"collapseTwo\"]/div/table[7]/tbody/tr[1]/td[1]")
+            if len(researcherNameElements) > 0:
                 return {
                     "登记号": self.driver.find_element(By.XPATH, "//*[@id=\"collapseOne\"]/div/table/tbody/tr[1]/td[1]").text.strip(),
                     "机构名称": self.driver.find_element(By.XPATH, "//*[@id=\"collapseTwo\"]/div/table[7]/tbody/tr[3]/td[2]").text.strip(),
@@ -72,6 +73,8 @@ class ClinicalTrialsCrawler:
                     "主要研究者姓名": self.driver.find_element(By.XPATH, "//*[@id=\"collapseTwo\"]/div/table[7]/tbody/tr[1]/td[1]").text.strip(),
                     "主要研究者单位": self.driver.find_element(By.XPATH, "//*[@id=\"collapseTwo\"]/div/table[7]/tbody/tr[3]/td[2]").text.strip()
                 }
+            else:
+                print(f"当前项目登记号 {self.driver.find_element(By.XPATH, "//*[@id=\"collapseOne\"]/div/table/tbody/tr[1]/td[1]").text.strip()}，无法解析主要研究者姓名，跳过")
         except Exception as e:
             print(f"解析行数据时出错: {e}")
         return None
@@ -88,6 +91,11 @@ class ClinicalTrialsCrawler:
                 self.driver.execute_script("arguments[0].click();", search_button)
                 time.sleep(2)  # 等待查询结果加载
             
+
+            #等待30秒，手动设置页码，可以继续从上一次中断的位置继续爬取，打开界面F12定位到下一个试验按钮，修改gotopage(1213);
+            print("等待30秒，手动设置页码，可以继续从上一次中断的位置继续爬取，打开界面F12定位到下一个试验按钮，修改gotopage(1213);")
+            time.sleep(30)
+
             current_page = start_page
             while current_page <= max_pages:
                 try:
@@ -219,7 +227,7 @@ def main():
     crawler = ClinicalTrialsCrawler()
     # 可以根据需要调整页数
     maxCount = 28600
-    crawler.crawl(start_page=1, max_pages=maxCount) 
+    crawler.crawl(start_page=1213, max_pages=maxCount) 
     # 获取当前时间
     current_time = datetime.now()
     # 格式化为指定格式：yyyymmddHHmmss
